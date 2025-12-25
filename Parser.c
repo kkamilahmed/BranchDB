@@ -303,10 +303,22 @@ ASTNode* parse_statement(Parser* parser) {
         case TOKEN_SELECT: return parse_select(parser);
         case TOKEN_INSERT: return parse_insert(parser);
         case TOKEN_CREATE:
-            if (parser->lexer->input[parser->lexer->pos] == 'D')
-                return parse_createdatabase(parser);
-            else
-                return parse_createtable(parser);
+
+            {
+                Lexer temp_lexer = *(parser->lexer);
+                Parser temp_parser = *parser;
+                temp_parser.lexer = &temp_lexer;
+                advance_token(&temp_parser);
+                
+                if (temp_parser.current.type == TOKEN_DATABASE)
+                    return parse_createdatabase(parser);
+                else if (temp_parser.current.type == TOKEN_TABLE)
+                    return parse_createtable(parser);
+                else {
+                    printf("Expected DATABASE or TABLE after CREATE\n");
+                    exit(1);
+                }
+            }
         case TOKEN_USE: return parse_use(parser);
         case TOKEN_SHOW: return parse_show(parser);
         default:

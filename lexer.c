@@ -13,13 +13,23 @@ typedef struct {
 static Keyword keyword_table[KEYWORD_TABLE_SIZE];  
 
 static unsigned int hash(const char* str) {
-    unsigned int h = 5381;
+    unsigned int hash = 2166136261u;  // FNV offset basis
     while (*str) {
-        h = ((h << 5) + h) + tolower(*str);
+        hash ^= (unsigned char)tolower(*str);  // case-insensitive
+        hash *= 16777619u;                     // FNV prime
         str++;
     }
-    return h % KEYWORD_TABLE_SIZE;
+    return hash % KEYWORD_TABLE_SIZE;
 }
+
+
+/* Convert string to lowercase */
+void toLower(char* input) {
+    for (int i = 0; input[i] != '\0'; i++) {
+        input[i] = tolower((unsigned char)input[i]);
+    }
+}
+
 
 static void keyword_insert(const char* key, TokenType value) {
     unsigned int index = hash(key);
@@ -45,24 +55,28 @@ static TokenType keyword_lookup(const char* key) {
 
 void init_keywords() {
     keyword_insert("select", TOKEN_SELECT);
-    keyword_insert("create",TOKEN_CREATE);
-    keyword_insert("table",TOKEN_TABLE);
-    keyword_insert("from", TOKEN_FROM);
-    keyword_insert("use", TOKEN_USE);
+    keyword_insert("create", TOKEN_CREATE);
+    keyword_insert("table", TOKEN_TABLE);
+    keyword_insert("database", TOKEN_DATABASE);
     keyword_insert("show", TOKEN_SHOW);
     keyword_insert("databases", TOKEN_DATABASES);
     keyword_insert("tables", TOKEN_TABLES);
     keyword_insert("insert", TOKEN_INSERT);
+    keyword_insert("into", TOKEN_INTO);
+    keyword_insert("values", TOKEN_VALUES);
+    keyword_insert("from", TOKEN_FROM);
+    keyword_insert("use", TOKEN_USE);
     keyword_insert("where", TOKEN_WHERE);
     keyword_insert("and", TOKEN_AND);
     keyword_insert("or", TOKEN_OR);
-    keyword_insert("database",TOKEN_DATABASE);
-    keyword_insert("varchar",TOKEN_VARCHAR);
-    keyword_insert("int",TOKEN_INT);
-    keyword_insert("double",TOKEN_DOUBLE);
-    keyword_insert("date",TOKEN_DATE);
-    
+
+
+    keyword_insert("varchar", TOKEN_VARCHAR);
+    keyword_insert("int", TOKEN_INT);
+    keyword_insert("double", TOKEN_DOUBLE);
+    keyword_insert("date", TOKEN_DATE);
 }
+
 
 
 char peek(Lexer* lexer) {

@@ -67,6 +67,9 @@ typedef struct {
 
 void init_keywords(void);
 
+
+void toLower(char* input) ;
+
 Token next_token(Lexer* lexer);
 
 

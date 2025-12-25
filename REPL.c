@@ -7,12 +7,7 @@
 #include "parser.h"
 #include "ast.h"
 
-/* Convert string to lowercase */
-void toLower(char* input) {
-    for (int i = 0; input[i] != '\0'; i++) {
-        input[i] = tolower((unsigned char)input[i]);
-    }
-}
+
 
 /* Prompt */
 void print_prompt() { 
