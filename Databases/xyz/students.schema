@@ -1,0 +1,3 @@
+TABLE:students
+COLUMNS:
+id,name,age,int

@@ -161,11 +161,21 @@ ASTNode* parse_insert(Parser* parser) {
     ASTNode* value_head = NULL;
     ASTNode* value_current = NULL;
 
-    while (parser->current.type == TOKEN_NUMBER || parser->current.type == TOKEN_STRING) {
-        ASTNode* val_node = ast_new(
-            parser->current.type == TOKEN_NUMBER ? AST_LITERAL_NUMBER : AST_LITERAL_STRING,
-            parser->current.lexeme
-        );
+    // Parse all values
+    while (parser->current.type == TOKEN_NUMBER || 
+           parser->current.type == TOKEN_STRING ||
+           parser->current.type == TOKEN_IDENTIFIER) {
+        
+        ASTNodeType value_type;
+        if (parser->current.type == TOKEN_NUMBER) {
+            value_type = AST_LITERAL_NUMBER;
+        } else if (parser->current.type == TOKEN_STRING) {
+            value_type = AST_LITERAL_STRING;
+        } else {
+            value_type = AST_IDENTIFIER;
+        }
+        
+        ASTNode* val_node = ast_new(value_type, parser->current.lexeme);
         advance_token(parser);
 
         if (!value_head) {
@@ -176,7 +186,12 @@ ASTNode* parse_insert(Parser* parser) {
             value_current = val_node;
         }
 
-        if (parser->current.type == TOKEN_COMMA) advance_token(parser);
+        // Check for comma (more values coming)
+        if (parser->current.type == TOKEN_COMMA) {
+            advance_token(parser);
+        } else {
+            break;  // No more values
+        }
     }
 
     expect(parser, TOKEN_RIGHT_PAREN);

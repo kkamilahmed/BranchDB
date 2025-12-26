@@ -6,7 +6,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "ast.h"
-
+#include "executor.h"
 
 
 /* Prompt */
@@ -26,7 +26,7 @@ int main() {
         if (strcmp(input_buffer->buffer, ".exit") == 0) {
             close_input_buffer(input_buffer);
             return 0;
-        }
+        }   
 
         /* Initialize lexer and parser */
         Lexer lexer = { input_buffer->buffer, 0 };
@@ -42,8 +42,9 @@ int main() {
 
         /* Print the AST */
         if (root) {
-            printf("AST:\n");
-            print_ast(root, 0);
+            execute_statement(root); 
+            //printf("AST:\n");
+            //print_ast(root, 0);
         }
 
         // Free AST nodes here if you implement a destroy function
